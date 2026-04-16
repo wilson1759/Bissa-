@@ -2,14 +2,13 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Build Docker Image') {
+        stage('Build Docker') {
             steps {
                 sh 'docker build -t bissa-app .'
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker') {
             steps {
                 sh 'docker run -d -p 8080:8080 bissa-app'
             }
