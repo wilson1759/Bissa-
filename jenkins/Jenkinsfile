@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "wilsonlove995084/bissa-williams-flask-app"
+    }
+
+    stages {
+
+        stage('Clonage du projet') {
+            steps {
+                git 'https://github.com/wilsonlove995084/tp1-docker-bissa-williams.git'
+            }
+        }
+
+        stage('Build de l image Docker') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE .'
+            }
+        }
+
+        stage('Login DockerHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                }
+            }
+        }
+
+        stage('Push vers DockerHub') {
+            steps {
+                sh 'docker push $DOCKER_IMAGE'
+            }
+        }
+    }
+}
